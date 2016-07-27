@@ -1,0 +1,14 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/SORA</item>
+        <item name="colorPrimaryDark">@color/SORA</item>
+        <item name="colorAccent">@color/SORA</item>
+
+        <!-- 自定义的RecyclerView分割线 -->
+        <item name="android:listDivider">@drawable/divider_bg</item>
+    </style>
+
+</resources>
