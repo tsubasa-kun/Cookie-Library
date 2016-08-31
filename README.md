@@ -10,7 +10,7 @@
 <!-- more -->
 
 ## 库结构图
-![cookie-library](http://7xt6qm.com1.z0.glb.clouddn.com/Cookie-Library201607271835.png)
+![cookie-library](http://7xt6qm.com1.z0.glb.clouddn.com/Cookie-Library201608311654.png)
 
 ## 库结构介绍
 整个库的名字叫做cookie-library，整个结构包括了activity，adapter，application，fragment，interfaces，network，utils，widget。
@@ -57,6 +57,7 @@
 
 ### widget
 - AutoCardView：配合AutoLayout的CardView
+- AutoSwipeRefreshLayout：可自动刷新的SwipeRefreshLayout
 - ClearableEditText：带清空功能的编辑框
 - DateAndTimePicker：时间和日期选择器
 - LoadAndRefreshView：上拉加载更多，下拉刷新控件
