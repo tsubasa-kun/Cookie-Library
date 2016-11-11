@@ -46,6 +46,8 @@
 - KeyBoardUtils：软键盘打开关闭工具类
 - LogUtils：日志工具类
 - NetUtils：网络状况获取相关工具类
+- PackageUtils：包工具类
+- PhoneUtils：手机设备工具类
 - PicCompressUtil：图片压缩工具类
 - ProgressUtils：显示ProgressDialog的工具类
 - RegexValidateUtils：正则表达式表单验证工具类
