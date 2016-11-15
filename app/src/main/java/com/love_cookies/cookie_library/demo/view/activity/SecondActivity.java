@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import com.love_cookies.cookie_library.activity.BaseActivity;
 import com.love_cookies.cookie_library.demo.R;
+import com.love_cookies.cookie_library.widget.PinchImageView;
 
 import org.xutils.image.ImageOptions;
 import org.xutils.view.annotation.ContentView;
@@ -21,7 +22,7 @@ import org.xutils.x;
 public class SecondActivity extends BaseActivity {
 
     @ViewInject(R.id.image_iv)
-    private ImageView imageView;
+    private PinchImageView imageView;
 
     @Override
     public void initWidget(Bundle savedInstanceState) {
