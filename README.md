@@ -62,6 +62,7 @@
 - AutoSwipeRefreshLayout：可自动刷新的SwipeRefreshLayout
 - ClearableEditText：带清空功能的编辑框
 - DateAndTimePicker：时间和日期选择器
+- JellyScrollView：带回弹效果的ScrollView
 - LoadAndRefreshView：上拉加载更多，下拉刷新控件
 - MeasuredGridView：自己适配高度的GridView，适用于嵌套在ScrollView，ListView内
 - MeasuredListView：自己适配高度的ListView，适用于嵌套在ScrollView内
