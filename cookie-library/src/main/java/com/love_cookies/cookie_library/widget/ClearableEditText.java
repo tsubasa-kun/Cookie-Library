@@ -12,6 +12,8 @@ import android.widget.EditText;
 import com.love_cookies.cookie_library.R;
 
 /**
+ * Created by xiekun on 2016/8/31 0031.
+ *
  * 带清空功能的编辑框
  */
 public class ClearableEditText extends EditText {
