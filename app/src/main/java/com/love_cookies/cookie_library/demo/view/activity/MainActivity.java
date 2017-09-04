@@ -96,13 +96,13 @@ public class MainActivity extends BaseActivity {
         final float radius = 16f;
         final View decorView = getWindow().getDecorView();
         //Activity's root View. Can also be root View of your layout
-        final View rootView = decorView.findViewById(android.R.id.content);
+        final ViewGroup rootView = (ViewGroup) decorView.findViewById(android.R.id.content);
         //set background, if your root layout doesn't have one
         final Drawable windowBackground = decorView.getBackground();
 
         blurView.setupWith(rootView)
                 .windowBackground(windowBackground)
-                .blurAlgorithm(new RenderScriptBlur(this, true)) //Preferable algorithm, needs RenderScript support mode enabled
+                .blurAlgorithm(new RenderScriptBlur(this)) //Preferable algorithm, needs RenderScript support mode enabled
                 .blurRadius(radius);
     }
 }
