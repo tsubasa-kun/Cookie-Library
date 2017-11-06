@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +40,10 @@ public class LoadAndRefreshView extends LinearLayout {
 	public static final int REFRESH = 0;//刷新
 	public static final int LOAD = 1;//加载
 
+	//enable
+	public boolean REFRESH_ENABLE = true;
+	public boolean LOAD_ENABLE = true;
+
 	/**
 	 * last y
 	 */
@@ -63,6 +68,10 @@ public class LoadAndRefreshView extends LinearLayout {
 	 * scrollview
 	 */
 	private ScrollView mScrollView;
+	/**
+	 * webview
+	 */
+	private WebView mWebView;
 	/**
 	 * header view height
 	 */
@@ -246,10 +255,13 @@ public class LoadAndRefreshView extends LinearLayout {
 				// finish later
 				mScrollView = (ScrollView) view;
 			}
+			if (view instanceof WebView) {
+				mWebView = (WebView) view;
+			}
 		}
-		if (mAdapterView == null && mScrollView == null) {
+		if (mAdapterView == null && mScrollView == null && mWebView == null) {
 			throw new IllegalArgumentException(
-					"must contain a AdapterView or ScrollView in this layout!");
+					"must contain a AdapterView or ScrollView or WebView in this layout!");
 		}
 	}
 
@@ -361,10 +373,20 @@ public class LoadAndRefreshView extends LinearLayout {
 		if (mHeaderState == REFRESHING || mFooterState == REFRESHING) {
 			return false;
 		}
+		//对于WebView
+		if (mWebView != null) {
+			if (REFRESH_ENABLE && deltaY > 0) {
+				mPullState = PULL_DOWN_STATE;
+				return true;
+			} else if (LOAD_ENABLE && deltaY < 0) {
+				mPullState = PULL_UP_STATE;
+				return true;
+			}
+		}
 		//对于ListView和GridView
 		if (mAdapterView != null) {
 			// 子view(ListView or GridView)滑动到最顶端
-			if (deltaY > 0) {
+			if (REFRESH_ENABLE && deltaY > 0) {
 
 				View child = mAdapterView.getChildAt(0);
 				if (child == null) {
@@ -384,7 +406,7 @@ public class LoadAndRefreshView extends LinearLayout {
 					return true;
 				}
 
-			} else if (deltaY < 0) {
+			} else if (LOAD_ENABLE && deltaY < 0) {
 				View lastChild = mAdapterView.getChildAt(mAdapterView
 						.getChildCount() - 1);
 				if (lastChild == null) {
@@ -405,10 +427,10 @@ public class LoadAndRefreshView extends LinearLayout {
 		if (mScrollView != null) {
 			// 子scroll view滑动到最顶端
 			View child = mScrollView.getChildAt(0);
-			if (deltaY > 0 && mScrollView.getScrollY() == 0) {
+			if (REFRESH_ENABLE && deltaY > 0 && mScrollView.getScrollY() == 0) {
 				mPullState = PULL_DOWN_STATE;
 				return true;
-			} else if (deltaY < 0
+			} else if (LOAD_ENABLE && deltaY < 0
 					&& child.getMeasuredHeight() <= getHeight()
 							+ mScrollView.getScrollY()) {
 				mPullState = PULL_UP_STATE;
@@ -643,4 +665,19 @@ public class LoadAndRefreshView extends LinearLayout {
 		public void onFooterRefresh(LoadAndRefreshView view);
 	}
 
+	/**
+	 * 设置刷新可用性
+	 * @param enable
+	 */
+	public void setRefreshEnable(boolean enable) {
+		REFRESH_ENABLE = enable;
+	}
+
+	/**
+	 * 设置加载可用性
+	 * @param enable
+	 */
+	public void setLoadEnable(boolean enable) {
+		LOAD_ENABLE = enable;
+	}
 }
