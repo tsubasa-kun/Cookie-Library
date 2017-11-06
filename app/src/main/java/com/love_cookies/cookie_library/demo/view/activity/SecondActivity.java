@@ -24,6 +24,10 @@ public class SecondActivity extends BaseActivity {
     @ViewInject(R.id.image_iv)
     private PinchImageView imageView;
 
+    /**
+     * 初始化控件
+     * @param savedInstanceState
+     */
     @Override
     public void initWidget(Bundle savedInstanceState) {
         ImageOptions imageOptions = new ImageOptions.Builder()
@@ -35,6 +39,10 @@ public class SecondActivity extends BaseActivity {
         x.image().bind(imageView, "assets://gate7.png", imageOptions);
     }
 
+    /**
+     * 控件的点击事件
+     * @param view
+     */
     @Override
     public void widgetClick(View view) {
 

@@ -73,6 +73,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public boolean onItemLongClick(ViewGroup parent, View view, Object o, int position) {
                 ToastUtils.show(MainActivity.this, "长点击了" + position);
+                turn(ThirdActivity.class);
                 return true;
             }
         });

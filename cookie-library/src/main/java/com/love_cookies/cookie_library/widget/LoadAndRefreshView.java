@@ -375,10 +375,10 @@ public class LoadAndRefreshView extends LinearLayout {
 		}
 		//对于WebView
 		if (mWebView != null) {
-			if (REFRESH_ENABLE && deltaY > 0) {
+			if (REFRESH_ENABLE && deltaY > 0 && mWebView.getScrollY() == 0) {
 				mPullState = PULL_DOWN_STATE;
 				return true;
-			} else if (LOAD_ENABLE && deltaY < 0) {
+			} else if (LOAD_ENABLE && deltaY < 0 && (mWebView.getContentHeight() * mWebView.getScale() - (mWebView.getHeight() + mWebView.getScrollY()) == 0)) {
 				mPullState = PULL_UP_STATE;
 				return true;
 			}
