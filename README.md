@@ -61,6 +61,7 @@
 - AutoCardView：配合AutoLayout的CardView
 - AutoSwipeRefreshLayout：可自动刷新的SwipeRefreshLayout
 - ClearableEditText：带清空功能的编辑框
+- CookieTitleBar：自定义TitleBar
 - DateAndTimePicker：时间和日期选择器
 - JellyScrollView：带回弹效果的ScrollView
 - LoadAndRefreshView：上拉加载更多，下拉刷新控件
