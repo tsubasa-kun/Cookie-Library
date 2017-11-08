@@ -3,6 +3,7 @@ package com.love_cookies.cookie_library.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 /**
  * Created by xiekun on 2016/11/11 0011.
@@ -59,6 +60,22 @@ public class PackageUtils {
             e.printStackTrace();
             return "";
         }
+    }
+
+    /**
+     * SDK4.0以上
+     * @return
+     */
+    public static boolean hasKitKat() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    /**
+     * SDK5.0以上
+     * @return
+     */
+    public static boolean hasLollipop() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
 }

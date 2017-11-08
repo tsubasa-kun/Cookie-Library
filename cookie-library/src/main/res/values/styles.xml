@@ -9,11 +9,25 @@
     </style>
 
     <!-- Cookie主题 -->
-    <style name="CookieTheme" parent="BaseAppTheme">
+    <style name="CookieTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/SORA</item>
+        <item name="colorPrimaryDark">@color/SORA</item>
+        <item name="colorAccent">@color/SORA</item>
         <item name="android:windowAnimationStyle">@style/Fade_Animations</item>
     </style>
+
+    <!-- Cookie主题（全屏） -->
+    <style name="CookieThemeFullscreen" parent="@android:style/Theme.Light.NoTitleBar.Fullscreen">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/SORA</item>
+        <item name="colorPrimaryDark">@color/SORA</item>
+        <item name="colorAccent">@color/SORA</item>
+        <item name="android:windowAnimationStyle">@style/Sliding_Animations</item>
+    </style>
+
     <!-- Activity滑动切换动画（类似IOS） -->
-    <style name="Enter_Animations" parent="@android:style/Animation.Activity">
+    <style name="Sliding_Animations" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/page_enter_in</item>
         <item name="android:activityOpenExitAnimation">@anim/page_enter_out</item>
         <item name="android:activityCloseEnterAnimation">@anim/page_exit_in</item>
