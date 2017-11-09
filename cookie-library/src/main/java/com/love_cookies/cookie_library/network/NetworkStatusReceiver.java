@@ -6,51 +6,51 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import com.love_cookies.cookie_library.utils.LogUtils;
-import com.love_cookies.cookie_library.utils.NetUtils;
+import com.love_cookies.cookie_library.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
 /**
- * Created by Nate on 2016/03/31.
+ * Created by xiekun on 2016/03/31.
  *
  * 网络状态监听广播
  */
-public class NetStatusReceiver extends BroadcastReceiver {
+public class NetworkStatusReceiver extends BroadcastReceiver {
 
     public final static String CUSTOM_NET_CHANGE_ACTION =
             "CUSTOM_NET_CHANGE_ACTION";
 
     private final static String ANDROID_NET_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
 
-    private final static String TAG = NetStatusReceiver.class.getSimpleName();
+    private final static String TAG = NetworkStatusReceiver.class.getSimpleName();
 
     private static boolean isNetAvailable = false;
 
-    private static NetUtils.NetType mNetType;
+    private static NetworkUtils.NetworkType mNetworkType;
 
-    private static ArrayList<NetChangeCallBack> mNetChangeCallBacks = new ArrayList<>();
+    private static ArrayList<NetworkChangeCallBack> mNetworkChangeCallBacks = new ArrayList<>();
 
     private static BroadcastReceiver mBroadcastReceiver;
 
     private static BroadcastReceiver getReceiver() {
         if (mBroadcastReceiver == null) {
-            mBroadcastReceiver = new NetStatusReceiver();
+            mBroadcastReceiver = new NetworkStatusReceiver();
         }
         return mBroadcastReceiver;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mBroadcastReceiver = NetStatusReceiver.this;
+        mBroadcastReceiver = NetworkStatusReceiver.this;
         if (intent.getAction().equalsIgnoreCase(ANDROID_NET_CHANGE_ACTION)
                 || intent.getAction().equalsIgnoreCase(CUSTOM_NET_CHANGE_ACTION)) {
-            if (!NetUtils.isNetworkAvailable(context)) {
+            if (!NetworkUtils.isNetworkAvailable(context)) {
                 LogUtils.i(TAG, "<--- network disconnected --->");
                 isNetAvailable = false;
             } else {
                 LogUtils.i(TAG, "<--- network connected --->");
                 isNetAvailable = true;
-                mNetType = NetUtils.getAPNType(context);
+                mNetworkType = NetworkUtils.getAPNType(context);
             }
             notifyCallBack();
         }
@@ -60,13 +60,13 @@ public class NetStatusReceiver extends BroadcastReceiver {
      * 刷新回调接口
      */
     private void notifyCallBack() {
-        if (!mNetChangeCallBacks.isEmpty()) {
-            int size = mNetChangeCallBacks.size();
+        if (!mNetworkChangeCallBacks.isEmpty()) {
+            int size = mNetworkChangeCallBacks.size();
             for (int i = 0; i < size; i++) {
-                NetChangeCallBack callBack = mNetChangeCallBacks.get(i);
+                NetworkChangeCallBack callBack = mNetworkChangeCallBacks.get(i);
                 if (callBack != null) {
                     if (isNetworkAvailable()) {
-                        callBack.onNetConnected(mNetType);
+                        callBack.onNetConnected(mNetworkType);
                     } else {
                         callBack.onNetDisConnected();
                     }
@@ -107,11 +107,11 @@ public class NetStatusReceiver extends BroadcastReceiver {
      *
      * @param callBack
      */
-    public static void registerNetChangeCallBack(NetChangeCallBack callBack) {
-        if (mNetChangeCallBacks == null) {
-            mNetChangeCallBacks = new ArrayList<>();
+    public static void registerNetChangeCallBack(NetworkChangeCallBack callBack) {
+        if (mNetworkChangeCallBacks == null) {
+            mNetworkChangeCallBacks = new ArrayList<>();
         }
-        mNetChangeCallBacks.add(callBack);
+        mNetworkChangeCallBacks.add(callBack);
     }
 
     /**
@@ -119,10 +119,10 @@ public class NetStatusReceiver extends BroadcastReceiver {
      *
      * @param callBack
      */
-    public static void removeRegisterNetChangeCallBack(NetChangeCallBack callBack) {
-        if (mNetChangeCallBacks != null) {
-            if (mNetChangeCallBacks.contains(callBack)) {
-                mNetChangeCallBacks.remove(callBack);
+    public static void removeRegisterNetChangeCallBack(NetworkChangeCallBack callBack) {
+        if (mNetworkChangeCallBacks != null) {
+            if (mNetworkChangeCallBacks.contains(callBack)) {
+                mNetworkChangeCallBacks.remove(callBack);
             }
         }
     }
@@ -137,7 +137,7 @@ public class NetStatusReceiver extends BroadcastReceiver {
     /**
      * @return 返回当前的网络类型
      */
-    public static NetUtils.NetType getAPNType() {
-        return mNetType;
+    public static NetworkUtils.NetworkType getAPNType() {
+        return mNetworkType;
     }
 }
