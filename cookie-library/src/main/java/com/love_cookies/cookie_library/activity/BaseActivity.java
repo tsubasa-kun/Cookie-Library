@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.love_cookies.cookie_library.application.ActivityCollections;
+import com.love_cookies.cookie_library.network.NetworkChangeCallBack;
+import com.love_cookies.cookie_library.network.NetworkStatusReceiver;
+import com.love_cookies.cookie_library.utils.NetworkUtils;
 
 import org.xutils.x;
 
@@ -16,6 +19,8 @@ import org.xutils.x;
  * Activity基类
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private NetworkChangeCallBack networkChangeCallBack;
 
     /**
      * 初始化控件和事件
@@ -29,6 +34,17 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      */
     public abstract void widgetClick(View view);
 
+    /**
+     * 网络连接了
+     * @param type
+     */
+    public abstract void netConnected(NetworkUtils.NetworkType type);
+
+    /**
+     * 网络断开了
+     */
+    public abstract void netDisConnected();
+
     @Override
     public void onClick(View v) {
         widgetClick(v);
@@ -38,9 +54,20 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);// 竖屏锁定
-        ActivityCollections.getInstance().addActivity(this);
         x.view().inject(this);
+        ActivityCollections.getInstance().addActivity(this);//入栈
         initWidget(savedInstanceState);
+        networkChangeCallBack = new NetworkChangeCallBack() {
+            @Override
+            public void onNetConnected(NetworkUtils.NetworkType type) {
+                netConnected(type);
+            }
+
+            @Override
+            public void onNetDisConnected() {
+                netDisConnected();
+            }
+        };
     }
 
     @Override
@@ -51,6 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onStart() {
         super.onStart();
+        NetworkStatusReceiver.registerNetChangeCallBack(networkChangeCallBack);
     }
 
     @Override
@@ -61,6 +89,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onPause() {
         super.onPause();
+        NetworkStatusReceiver.removeRegisterNetChangeCallBack(networkChangeCallBack);
     }
 
     @Override
@@ -71,7 +100,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollections.getInstance().finishActivity(this);
+        ActivityCollections.getInstance().finishActivity(this);//出栈
+        NetworkStatusReceiver.removeRegisterNetChangeCallBack(networkChangeCallBack);
     }
 
     /**

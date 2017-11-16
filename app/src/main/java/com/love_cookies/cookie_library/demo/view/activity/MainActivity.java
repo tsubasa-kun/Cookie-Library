@@ -13,6 +13,7 @@ import com.love_cookies.cookie_library.adapter.CommonRecyclerViewHolder;
 import com.love_cookies.cookie_library.adapter.OnRecyclerItemClickListener;
 import com.love_cookies.cookie_library.adapter.RecyclerViewDivider;
 import com.love_cookies.cookie_library.utils.CircularAnimUtils;
+import com.love_cookies.cookie_library.utils.NetworkUtils;
 import com.love_cookies.cookie_library.utils.ToastUtils;
 import com.love_cookies.cookie_library.demo.R;
 
@@ -88,6 +89,23 @@ public class MainActivity extends BaseActivity {
     @Override
     public void widgetClick(View view) {
 
+    }
+
+    /**
+     * 网络连接了
+     * @param type
+     */
+    @Override
+    public void netConnected(NetworkUtils.NetworkType type) {
+        ToastUtils.show(this, "网络连接了（" + type.name() + "）");
+    }
+
+    /**
+     * 网络断开了
+     */
+    @Override
+    public void netDisConnected() {
+        ToastUtils.show(this, "网络断开了");
     }
 
     /**

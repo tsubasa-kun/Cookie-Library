@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.love_cookies.cookie_library.network.NetworkChangeCallBack;
+import com.love_cookies.cookie_library.network.NetworkStatusReceiver;
+import com.love_cookies.cookie_library.utils.NetworkUtils;
+
 import org.xutils.x;
 
 /**
@@ -18,6 +22,7 @@ import org.xutils.x;
 public abstract class BaseFragment extends Fragment implements View.OnClickListener {
 
     private boolean injected = false;
+    private NetworkChangeCallBack networkChangeCallBack;
 
     /**
      * 初始化控件和事件
@@ -31,6 +36,17 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
      */
     public abstract void widgetClick(View view);
 
+    /**
+     * 网络连接了
+     * @param type
+     */
+    public abstract void netConnected(NetworkUtils.NetworkType type);
+
+    /**
+     * 网络断开了
+     */
+    public abstract void netDisConnected();
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -38,6 +54,17 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
             x.view().inject(this, this.getView());
         }
         initWidget(savedInstanceState);
+        networkChangeCallBack = new NetworkChangeCallBack() {
+            @Override
+            public void onNetConnected(NetworkUtils.NetworkType type) {
+                netConnected(type);
+            }
+
+            @Override
+            public void onNetDisConnected() {
+                netDisConnected();
+            }
+        };
     }
 
     @Override
@@ -69,6 +96,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Override
     public void onStart() {
         super.onStart();
+        NetworkStatusReceiver.registerNetChangeCallBack(networkChangeCallBack);
     }
 
     @Override
@@ -79,6 +107,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
+        NetworkStatusReceiver.removeRegisterNetChangeCallBack(networkChangeCallBack);
     }
 
     @Override
@@ -94,6 +123,7 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+        NetworkStatusReceiver.removeRegisterNetChangeCallBack(networkChangeCallBack);
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.love_cookies.cookie_library.activity.BaseActivity;
 import com.love_cookies.cookie_library.demo.R;
+import com.love_cookies.cookie_library.utils.NetworkUtils;
 import com.love_cookies.cookie_library.widget.CookieTitleBar;
 import com.love_cookies.cookie_library.widget.LoadAndRefreshView;
 
@@ -95,6 +96,23 @@ public class ThirdActivity extends BaseActivity implements LoadAndRefreshView.On
      */
     @Override
     public void widgetClick(View view) {
+
+    }
+
+    /**
+     * 网络连接了
+     * @param type
+     */
+    @Override
+    public void netConnected(NetworkUtils.NetworkType type) {
+
+    }
+
+    /**
+     * 网络断开了
+     */
+    @Override
+    public void netDisConnected() {
 
     }
 

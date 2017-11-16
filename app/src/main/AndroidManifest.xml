@@ -20,6 +20,11 @@
         </activity>
         <activity android:name=".view.activity.SecondActivity" />
         <activity android:name=".view.activity.ThirdActivity"></activity>
+        <receiver android:name="com.love_cookies.cookie_library.network.NetworkStatusReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
