@@ -38,14 +38,14 @@
 - CallBack：在使用MVP架构的时候使用的回调
 
 ### network
-- NetChangeCallBack：网络状况发生改变时的回调接口
-- NetStatusReceiver：网络状态监听广播接收器
+- NetworkChangeCallBack：网络状况发生改变时的回调接口
+- NetworkStatusReceiver：网络状态监听广播接收器
 
 ### utils
 - CircularAnimUtils：圆形展开切换动画
 - KeyBoardUtils：软键盘打开关闭工具类
 - LogUtils：日志工具类
-- NetUtils：网络状况获取相关工具类
+- NetworkUtils：网络状况获取相关工具类
 - PackageUtils：包工具类
 - PhoneUtils：手机设备工具类
 - PicCompressUtil：图片压缩工具类
@@ -62,6 +62,7 @@
 - AutoSwipeRefreshLayout：可自动刷新的SwipeRefreshLayout
 - ClearableEditText：带清空功能的编辑框
 - CookieTitleBar：自定义TitleBar
+- CookieToast：自定义Toast
 - DateAndTimePicker：时间和日期选择器
 - JellyScrollView：带回弹效果的ScrollView
 - LoadAndRefreshView：上拉加载更多，下拉刷新控件
