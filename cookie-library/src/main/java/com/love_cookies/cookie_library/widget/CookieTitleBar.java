@@ -125,14 +125,14 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
      *
      * @param immersive
      */
-    public void setImmersive(boolean immersive) {
-        mImmersive = immersive;
-        if (mImmersive) {
-            mStatusBarHeight = getStatusBarHeight();
-        } else {
-            mStatusBarHeight = 0;
-        }
-    }
+//    public void setImmersive(boolean immersive) {
+//        mImmersive = immersive;
+//        if (mImmersive) {
+//            mStatusBarHeight = getStatusBarHeight();
+//        } else {
+//            mStatusBarHeight = 0;
+//        }
+//    }
 
     /**
      * 设置沉浸式
