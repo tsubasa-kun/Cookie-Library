@@ -8,8 +8,8 @@ android {
         applicationId "com.love_cookies.cookie_library.demo"
         minSdkVersion 19
         targetSdkVersion 23
-        versionName "1.0.2"
-        versionCode 3
+        versionName "1.0.3"
+        versionCode 4
 
         renderscriptTargetApi 19
         renderscriptSupportModeEnabled true

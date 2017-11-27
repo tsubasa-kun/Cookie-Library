@@ -138,12 +138,12 @@ public class StatusBarUtils {
     private static void setAndroidNativeLightStatusBar(Activity activity, boolean dark) {
         View decor = activity.getWindow().getDecorView();
         if (dark) {
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         } else {
             // We want to change tint color to white again.
             // You can also record the flags in advance so that you can turn UI back completely if
             // you have set other flags before, such as translucent or full screen.
-            decor.setSystemUiVisibility(0);
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN|0);
         }
     }
 
