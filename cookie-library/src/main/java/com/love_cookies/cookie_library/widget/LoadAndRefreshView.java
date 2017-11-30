@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -41,8 +41,8 @@ public class LoadAndRefreshView extends LinearLayout {
 	public static final int LOAD = 1;//加载
 
 	//enable
-	public boolean REFRESH_ENABLE = true;
-	public boolean LOAD_ENABLE = true;
+	public boolean REFRESH_ENABLE = false;
+	public boolean LOAD_ENABLE = false;
 
 	/**
 	 * last y
@@ -104,11 +104,11 @@ public class LoadAndRefreshView extends LinearLayout {
 	/**
 	 * header progress bar
 	 */
-	private ProgressBar mHeaderProgressBar;
+	private ImageView mHeaderProgressBar;
 	/**
 	 * footer progress bar
 	 */
-	private ProgressBar mFooterProgressBar;
+	private ImageView mFooterProgressBar;
 	/**
 	 * layout inflater
 	 */
@@ -146,19 +146,28 @@ public class LoadAndRefreshView extends LinearLayout {
 	 */
 //	private String mLastUpdateTime;
 
+	private Context mContext;
+
+	/**
+	 * 没有更多
+	 */
+	private boolean noMore = false;
+
 	public LoadAndRefreshView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		mContext = context;
 		init();
 	}
 
 	public LoadAndRefreshView(Context context) {
 		super(context);
+		mContext = context;
 		init();
 	}
 
 	/**
 	 * init
-	 * 
+	 *
 	 * @description
 	 *            hylin 2012-7-26上午10:08:33
 	 */
@@ -190,7 +199,7 @@ public class LoadAndRefreshView extends LinearLayout {
 				.findViewById(R.id.pull_to_refresh_image);
 		mHeaderTextView = (TextView) mHeaderView
 				.findViewById(R.id.pull_to_refresh_text);
-		mHeaderProgressBar = (ProgressBar) mHeaderView
+		mHeaderProgressBar = (ImageView) mHeaderView
 				.findViewById(R.id.pull_to_refresh_progress);
 		// header layout
 		measureView(mHeaderView);
@@ -211,7 +220,7 @@ public class LoadAndRefreshView extends LinearLayout {
 				.findViewById(R.id.pull_to_load_image);
 		mFooterTextView = (TextView) mFooterView
 				.findViewById(R.id.pull_to_load_text);
-		mFooterProgressBar = (ProgressBar) mFooterView
+		mFooterProgressBar = (ImageView) mFooterView
 				.findViewById(R.id.pull_to_load_progress);
 		// footer layout
 		measureView(mFooterView);
@@ -236,7 +245,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * init AdapterView like ListView,GridView and so on;or init ScrollView
-	 * 
+	 *
 	 * @description hylin 2012-7-30下午8:48:12
 	 */
 	private void initContentAdapterView() {
@@ -259,7 +268,7 @@ public class LoadAndRefreshView extends LinearLayout {
 				mWebView = (WebView) view;
 			}
 		}
-		if (mAdapterView == null && mScrollView == null && mWebView == null) {
+		if (mAdapterView == null && mScrollView == null  && mWebView == null) {
 			throw new IllegalArgumentException(
 					"must contain a AdapterView or ScrollView or WebView in this layout!");
 		}
@@ -289,20 +298,20 @@ public class LoadAndRefreshView extends LinearLayout {
 	public boolean onInterceptTouchEvent(MotionEvent e) {
 		int y = (int) e.getRawY();
 		switch (e.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			// 首先拦截down事件,记录y坐标
-			mLastMotionY = y;
-			break;
-		case MotionEvent.ACTION_MOVE:
-			// deltaY > 0 是向下运动,< 0是向上运动
-			int deltaY = y - mLastMotionY;
-			if (isRefreshViewScroll(deltaY)) {
-				return true;
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_CANCEL:
-			break;
+			case MotionEvent.ACTION_DOWN:
+				// 首先拦截down事件,记录y坐标
+				mLastMotionY = y;
+				break;
+			case MotionEvent.ACTION_MOVE:
+				// deltaY > 0 是向下运动,< 0是向上运动
+				int deltaY = y - mLastMotionY;
+				if (isRefreshViewScroll(deltaY)) {
+					return true;
+				}
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				break;
 		}
 		return false;
 	}
@@ -318,53 +327,53 @@ public class LoadAndRefreshView extends LinearLayout {
 		}
 		int y = (int) event.getRawY();
 		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			// onInterceptTouchEvent已经记录
-			// mLastMotionY = y;
-			break;
-		case MotionEvent.ACTION_MOVE:
-			int deltaY = y - mLastMotionY;
-			if (mPullState == PULL_DOWN_STATE) {
-				// PullToRefreshView执行下拉
-				Log.i(TAG, " pull down!parent view move!");
-				headerPrepareToRefresh(deltaY);
-				// setHeaderPadding(-mHeaderViewHeight);
-			} else if (mPullState == PULL_UP_STATE) {
-				// PullToRefreshView执行上拉
-				Log.i(TAG, "pull up!parent view move!");
-				footerPrepareToRefresh(deltaY);
-			}
-			mLastMotionY = y;
-			break;
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_CANCEL:
-			int topMargin = getHeaderTopMargin();
-			if (mPullState == PULL_DOWN_STATE) {
-				if (topMargin >= 0) {
-					// 开始刷新
-					headerRefreshing();
-				} else {
-					// 还没有执行刷新，重新隐藏
-					setHeaderTopMargin(-mHeaderViewHeight);
+			case MotionEvent.ACTION_DOWN:
+				// onInterceptTouchEvent已经记录
+				// mLastMotionY = y;
+				break;
+			case MotionEvent.ACTION_MOVE:
+				int deltaY = y - mLastMotionY;
+				if (mPullState == PULL_DOWN_STATE) {
+					// PullToRefreshView执行下拉
+					Log.i(TAG, " pull down!parent view move!");
+					headerPrepareToRefresh(deltaY);
+					// setHeaderPadding(-mHeaderViewHeight);
+				} else if (mPullState == PULL_UP_STATE) {
+					// PullToRefreshView执行上拉
+					Log.i(TAG, "pull up!parent view move!");
+					footerPrepareToRefresh(deltaY);
 				}
-			} else if (mPullState == PULL_UP_STATE) {
-				if (Math.abs(topMargin) >= mHeaderViewHeight
-						+ mFooterViewHeight) {
-					// 开始执行footer 刷新
-					footerRefreshing();
-				} else {
-					// 还没有执行刷新，重新隐藏
-					setHeaderTopMargin(-mHeaderViewHeight);
+				mLastMotionY = y;
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				int topMargin = getHeaderTopMargin();
+				if (mPullState == PULL_DOWN_STATE) {
+					if (topMargin >= 0) {
+						// 开始刷新
+						headerRefreshing();
+					} else {
+						// 还没有执行刷新，重新隐藏
+						setHeaderTopMargin(-mHeaderViewHeight);
+					}
+				} else if (mPullState == PULL_UP_STATE) {
+					if (Math.abs(topMargin) >= mHeaderViewHeight
+							+ mFooterViewHeight) {
+						// 开始执行footer 刷新
+						footerRefreshing();
+					} else {
+						// 还没有执行刷新，重新隐藏
+						setHeaderTopMargin(-mHeaderViewHeight);
+					}
 				}
-			}
-			break;
+				break;
 		}
 		return super.onTouchEvent(event);
 	}
 
 	/**
 	 * 是否应该到了父View,即PullToRefreshView滑动
-	 * 
+	 *
 	 * @param deltaY
 	 *            , deltaY > 0 是向下运动,< 0是向上运动
 	 * @return
@@ -378,7 +387,7 @@ public class LoadAndRefreshView extends LinearLayout {
 			if (REFRESH_ENABLE && deltaY > 0 && mWebView.getScrollY() == 0) {
 				mPullState = PULL_DOWN_STATE;
 				return true;
-			} else if (LOAD_ENABLE && deltaY < 0 && (mWebView.getContentHeight() * mWebView.getScale() - (mWebView.getHeight() + mWebView.getScrollY()) == 0)) {
+			} else if (LOAD_ENABLE && deltaY < 0 && mWebView.getContentHeight() * mWebView.getScale() - (mWebView.getHeight() + mWebView.getScrollY()) == 0) {
 				mPullState = PULL_UP_STATE;
 				return true;
 			}
@@ -387,7 +396,6 @@ public class LoadAndRefreshView extends LinearLayout {
 		if (mAdapterView != null) {
 			// 子view(ListView or GridView)滑动到最顶端
 			if (REFRESH_ENABLE && deltaY > 0) {
-
 				View child = mAdapterView.getChildAt(0);
 				if (child == null) {
 					// 如果mAdapterView中没有数据,不拦截
@@ -405,7 +413,6 @@ public class LoadAndRefreshView extends LinearLayout {
 					mPullState = PULL_DOWN_STATE;
 					return true;
 				}
-
 			} else if (LOAD_ENABLE && deltaY < 0) {
 				View lastChild = mAdapterView.getChildAt(mAdapterView
 						.getChildCount() - 1);
@@ -417,7 +424,7 @@ public class LoadAndRefreshView extends LinearLayout {
 				// 等于父View的高度说明mAdapterView已经滑动到最后
 				if (lastChild.getBottom() <= getHeight()
 						&& mAdapterView.getLastVisiblePosition() == mAdapterView
-								.getCount() - 1) {
+						.getCount() - 1) {
 					mPullState = PULL_UP_STATE;
 					return true;
 				}
@@ -432,7 +439,7 @@ public class LoadAndRefreshView extends LinearLayout {
 				return true;
 			} else if (LOAD_ENABLE && deltaY < 0
 					&& child.getMeasuredHeight() <= getHeight()
-							+ mScrollView.getScrollY()) {
+					+ mScrollView.getScrollY()) {
 				mPullState = PULL_UP_STATE;
 				return true;
 			}
@@ -442,7 +449,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * header 准备刷新,手指移动过程,还没有释放
-	 * 
+	 *
 	 * @param deltaY
 	 *            ,手指滑动的距离
 	 */
@@ -466,7 +473,7 @@ public class LoadAndRefreshView extends LinearLayout {
 	/**
 	 * footer 准备刷新,手指移动过程,还没有释放 移动footer view高度同样和移动header view
 	 * 高度是一样，都是通过修改header view的topmargin的值来达到
-	 * 
+	 *
 	 * @param deltaY
 	 *            ,手指滑动的距离
 	 */
@@ -476,22 +483,33 @@ public class LoadAndRefreshView extends LinearLayout {
 		// 说明footer view 完全显示出来了，修改footer view 的提示状态
 		if (Math.abs(newTopMargin) >= (mHeaderViewHeight + mFooterViewHeight)
 				&& mFooterState != RELEASE_TO_REFRESH) {
-			mFooterTextView
-					.setText(R.string.pull_to_refresh_footer_release_label);
-			mFooterImageView.clearAnimation();
-			mFooterImageView.startAnimation(mFlipAnimation);
+			if (noMore) {
+				mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_no_data_label);
+				mFooterImageView.setVisibility(GONE);
+			} else {
+				mFooterTextView.setText(R.string.pull_to_refresh_footer_release_label);
+				mFooterImageView.setVisibility(VISIBLE);
+				mFooterImageView.clearAnimation();
+				mFooterImageView.startAnimation(mFlipAnimation);
+			}
 			mFooterState = RELEASE_TO_REFRESH;
 		} else if (Math.abs(newTopMargin) < (mHeaderViewHeight + mFooterViewHeight)) {
-			mFooterImageView.clearAnimation();
-			mFooterImageView.startAnimation(mFlipAnimation);
-			mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
+			if (noMore) {
+				mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_no_data_label);
+				mFooterImageView.setVisibility(GONE);
+			} else {
+				mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
+				mFooterImageView.setVisibility(VISIBLE);
+				mFooterImageView.clearAnimation();
+				mFooterImageView.startAnimation(mFlipAnimation);
+			}
 			mFooterState = PULL_TO_REFRESH;
 		}
 	}
 
 	/**
 	 * 修改Header view top margin的值
-	 * 
+	 *
 	 * @description
 	 * @param deltaY
 	 * @return hylin 2012-7-31下午1:14:31
@@ -516,7 +534,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * header refreshing
-	 * 
+	 *
 	 * @description hylin 2012-7-31上午9:10:12
 	 */
 	private void headerRefreshing() {
@@ -526,6 +544,11 @@ public class LoadAndRefreshView extends LinearLayout {
 		mHeaderImageView.clearAnimation();
 		mHeaderImageView.setImageDrawable(null);
 		mHeaderProgressBar.setVisibility(View.VISIBLE);
+		RotateAnimation rotate = new RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		rotate.setDuration(1000);
+		rotate.setRepeatCount(2000);
+		rotate.setInterpolator(new LinearInterpolator());
+		mHeaderProgressBar.setAnimation(rotate);
 		mHeaderTextView.setText(R.string.pull_to_refresh_refreshing_label);
 		if (mOnHeaderRefreshListener != null) {
 			mOnHeaderRefreshListener.onHeaderRefresh(this);
@@ -534,19 +557,30 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * footer refreshing
-	 * 
+	 *
 	 * @description hylin 2012-7-31上午9:09:59
 	 */
 	private void footerRefreshing() {
 		mFooterState = REFRESHING;
 		int top = mHeaderViewHeight + mFooterViewHeight;
 		setHeaderTopMargin(-top);
-		mFooterImageView.setVisibility(View.GONE);
-		mFooterImageView.clearAnimation();
-		mFooterImageView.setImageDrawable(null);
-		mFooterProgressBar.setVisibility(View.VISIBLE);
-		mFooterTextView
-				.setText(R.string.pull_to_refresh_footer_refreshing_label);
+		if (noMore) {
+			mFooterImageView.setVisibility(GONE);
+			mFooterProgressBar.setVisibility(View.GONE);
+			mFooterProgressBar.clearAnimation();
+			mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_no_data_label);
+		} else {
+			mFooterImageView.setVisibility(View.GONE);
+			mFooterImageView.clearAnimation();
+			mFooterImageView.setImageDrawable(null);
+			mFooterProgressBar.setVisibility(View.VISIBLE);
+			RotateAnimation rotate = new RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+			rotate.setDuration(1000);
+			rotate.setRepeatCount(2000);
+			rotate.setInterpolator(new LinearInterpolator());
+			mFooterProgressBar.setAnimation(rotate);
+			mFooterTextView.setText(R.string.pull_to_refresh_footer_refreshing_label);
+		}
 		if (mOnFooterRefreshListener != null) {
 			mOnFooterRefreshListener.onFooterRefresh(this);
 		}
@@ -554,7 +588,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * 设置header view 的topMargin的值
-	 * 
+	 *
 	 * @description
 	 * @param topMargin
 	 *            ，为0时，说明header view 刚好完全显示出来； 为-mHeaderViewHeight时，说明完全隐藏了
@@ -569,7 +603,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * header view 完成更新后恢复初始状态
-	 * 
+	 *
 	 * @description hylin 2012-7-31上午11:54:23
 	 */
 	public void onHeaderRefreshComplete() {
@@ -578,6 +612,7 @@ public class LoadAndRefreshView extends LinearLayout {
 		mHeaderImageView.setImageResource(R.mipmap.ic_pulltorefresh_arrow);
 		mHeaderTextView.setText(R.string.pull_to_refresh_pull_label);
 		mHeaderProgressBar.setVisibility(View.GONE);
+		mHeaderProgressBar.clearAnimation();
 		mHeaderState = PULL_TO_REFRESH;
 	}
 
@@ -598,14 +633,19 @@ public class LoadAndRefreshView extends LinearLayout {
 		setHeaderTopMargin(-mHeaderViewHeight);
 		mFooterImageView.setVisibility(View.VISIBLE);
 		mFooterImageView.setImageResource(R.mipmap.ic_pulltorefresh_arrow_up);
-		mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
+		if (noMore) {
+			mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_no_data_label);
+		} else {
+			mFooterTextView.setText(R.string.pull_to_refresh_footer_pull_label);
+		}
 		mFooterProgressBar.setVisibility(View.GONE);
+		mFooterProgressBar.clearAnimation();
 		mFooterState = PULL_TO_REFRESH;
 	}
 
 	/**
 	 * 获取当前header view 的topMargin
-	 * 
+	 *
 	 * @description
 	 * @return hylin 2012-7-31上午11:22:50
 	 */
@@ -614,9 +654,25 @@ public class LoadAndRefreshView extends LinearLayout {
 		return params.topMargin;
 	}
 
+	/**
+	 * 设置刷新可用状态
+	 * @param enable
+	 */
+	public void setRefreshEnable(boolean enable) {
+		REFRESH_ENABLE = enable;
+	}
+
+	/**
+	 * 设置加载可用状态
+	 * @param enable
+	 */
+	public void setLoadEnable(boolean enable) {
+		LOAD_ENABLE = enable;
+	}
+
 //	/**
 //	 * lock
-//	 * 
+//	 *
 //	 * @description hylin 2012-7-27下午6:52:25
 //	 */
 //	private void lock() {
@@ -625,7 +681,7 @@ public class LoadAndRefreshView extends LinearLayout {
 //
 //	/**
 //	 * unlock
-//	 * 
+//	 *
 //	 * @description hylin 2012-7-27下午6:53:18
 //	 */
 //	private void unlock() {
@@ -634,7 +690,7 @@ public class LoadAndRefreshView extends LinearLayout {
 
 	/**
 	 * set headerRefreshListener
-	 * 
+	 *
 	 * @description
 	 * @param headerRefreshListener
 	 *            hylin 2012-7-31上午11:43:58
@@ -666,18 +722,18 @@ public class LoadAndRefreshView extends LinearLayout {
 	}
 
 	/**
-	 * 设置刷新可用性
-	 * @param enable
+	 * 没有更多？
+	 * @return
 	 */
-	public void setRefreshEnable(boolean enable) {
-		REFRESH_ENABLE = enable;
+	public boolean isNoMore() {
+		return noMore;
 	}
 
 	/**
-	 * 设置加载可用性
-	 * @param enable
+	 * 设置没有更多
+	 * @param noMore
 	 */
-	public void setLoadEnable(boolean enable) {
-		LOAD_ENABLE = enable;
+	public void setNoMore(boolean noMore) {
+		this.noMore = noMore;
 	}
 }
