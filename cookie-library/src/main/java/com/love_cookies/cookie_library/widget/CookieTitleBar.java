@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +22,26 @@ import java.util.LinkedList;
 
 /**
  * Created by xiekun on 2017/11/08.
- *
+ * <p>
  * 自定义TitleBar
  */
 
 public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
-    private static final int DEFAULT_MAIN_TEXT_SIZE = 18;//默认主标题字体大小
+    private static final int DEFAULT_MAIN_TEXT_SIZE = 14;//默认主标题字体大小
     private static final int DEFAULT_SUB_TEXT_SIZE = 12;//默认副标题字体大小
     private static final int DEFAULT_TITLE_TEXT_COLOR = Color.BLACK;//默认标题字体颜色
-    private static final int DEFAULT_ACTION_TEXT_SIZE = 14;//默认两侧按钮字体大小
-    private static final int DEFAULT_ACTION_TEXT_COLOR = Color.parseColor("#6f7479");//默认两侧按钮字体颜色
-    private static final int DEFAULT_TITLE_BAR_HEIGHT = 40;//默认标题栏高度
+    private static final int DEFAULT_ACTION_TEXT_SIZE = 12;//默认两侧按钮字体大小
+    private static final int DEFAULT_ACTION_TEXT_COLOR = Color.BLACK;//默认两侧按钮字体颜色
+    private static final int DEFAULT_TITLE_BAR_HEIGHT = 45;//默认标题栏高度
+    private static final int DEFAULT_LEFT_IMG_SIZE = 25;//默认右侧图标大小
+    private static final int DEFAULT_ACTION_PADDING = 10;//默认action按钮内边距
+    private static final int DEFAULT_OUT_PADDING = 0;//默认外内边距
     private static final int DEFAULT_TITLE_BACKGROUND_COLOR = Color.WHITE;//默认标题栏背景色
 
     private static final String STATUS_BAR_HEIGHT_RES_NAME = "status_bar_height";
 
+    private LinearLayout mLeftLayout;
+    private ImageView mLeftImage;
     private TextView mLeftText;
     private LinearLayout mRightLayout;
     private LinearLayout mCenterLayout;
@@ -53,6 +59,8 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
     private int mActionTextColor;
     private int mHeight;
 
+    public Context mContext;
+
     public CookieTitleBar(Context context) {
         super(context);
         init(context);
@@ -69,28 +77,42 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
     }
 
     private void init(Context context) {
+        mContext = context;
         if (mImmersive) {
             mStatusBarHeight = getStatusBarHeight();
         }
-        mActionPadding = dip2px(2);
-        mOutPadding = dip2px(0);
-        mHeight = dip2px(DEFAULT_TITLE_BAR_HEIGHT);
+        mActionPadding = px2dip(DEFAULT_ACTION_PADDING);
+        mOutPadding = px2dip(DEFAULT_OUT_PADDING);
+        mHeight = px2dip(DEFAULT_TITLE_BAR_HEIGHT);
         initView(context);
     }
 
     private void initView(Context context) {
-        mLeftText = new TextView(context);
+        mLeftLayout = new LinearLayout(context);
         mCenterLayout = new LinearLayout(context);
         mRightLayout = new LinearLayout(context);
         mDividerView = new View(context);
 
         LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
 
+        mLeftImage = new ImageView(context);
+        mLeftText = new TextView(context);
+        mLeftLayout.addView(mLeftImage, layoutParams);
+        mLeftLayout.addView(mLeftText, layoutParams);
+
         mLeftText.setTextSize(DEFAULT_ACTION_TEXT_SIZE);
+        mLeftText.setGravity(Gravity.CENTER);
         mLeftText.setSingleLine();
-        mLeftText.setGravity(Gravity.CENTER_VERTICAL);
-        mLeftText.setPadding(mOutPadding + mActionPadding, 0, mOutPadding, 0);
         mLeftText.setTextColor(DEFAULT_ACTION_TEXT_COLOR);
+
+        LayoutParams imgLp = mLeftImage.getLayoutParams();
+        imgLp.width = px2dip(DEFAULT_LEFT_IMG_SIZE);
+        imgLp.height = px2dip(DEFAULT_LEFT_IMG_SIZE);
+        mLeftImage.setLayoutParams(imgLp);
+        mLeftImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        mLeftLayout.setPadding(mOutPadding + mActionPadding, 0, mOutPadding, 0);
+        mLeftLayout.setGravity(Gravity.CENTER_VERTICAL);
 
         mCenterText = new TextView(context);
         mSubTitleText = new TextView(context);
@@ -112,27 +134,13 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
 
         mRightLayout.setPadding(mOutPadding, 0, mOutPadding, 0);
 
-        addView(mLeftText, layoutParams);
+        addView(mLeftLayout, layoutParams);
         addView(mCenterLayout);
         addView(mRightLayout, layoutParams);
         addView(mDividerView, new LayoutParams(LayoutParams.MATCH_PARENT, 1));
 
         setBackgroundColor(DEFAULT_TITLE_BACKGROUND_COLOR);
     }
-
-    /**
-     * 设置沉浸式
-     *
-     * @param immersive
-     */
-//    public void setImmersive(boolean immersive) {
-//        mImmersive = immersive;
-//        if (mImmersive) {
-//            mStatusBarHeight = getStatusBarHeight();
-//        } else {
-//            mStatusBarHeight = 0;
-//        }
-//    }
 
     /**
      * 设置沉浸式
@@ -219,7 +227,7 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
      * @param resId
      */
     public void setLeftImageResource(int resId) {
-        mLeftText.setCompoundDrawablesWithIntrinsicBounds(resId, 0, 0, 0);
+        mLeftImage.setImageResource(resId);
     }
 
     /**
@@ -228,7 +236,7 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
      * @param l
      */
     public void setLeftClickListener(OnClickListener l) {
-        mLeftText.setOnClickListener(l);
+        mLeftLayout.setOnClickListener(l);
     }
 
     /**
@@ -327,6 +335,22 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
      */
     public void setTitle(int resid) {
         setTitle(getResources().getString(resid));
+    }
+
+    /**
+     * 设置带透明度的背景颜色
+     * @param opacity
+     * @param color
+     */
+    public void setOpacityBackgroundColor(int opacity, String color) {
+        int a = opacity;
+        String rStr = color.substring(0, 2);
+        int r = Integer.parseInt(rStr, 16);
+        String gStr = color.substring(2, 4);
+        int g = Integer.parseInt(gStr, 16);
+        String bStr = color.substring(4, 6);
+        int b = Integer.parseInt(bStr, 16);
+        setBackgroundColor(Color.argb(a, r, g, b));
     }
 
     /**
@@ -581,11 +605,11 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
             height = MeasureSpec.getSize(heightMeasureSpec) + mStatusBarHeight;
         }
         mScreenWidth = MeasureSpec.getSize(widthMeasureSpec);
-        measureChild(mLeftText, widthMeasureSpec, heightMeasureSpec);
+        measureChild(mLeftLayout, widthMeasureSpec, heightMeasureSpec);
         measureChild(mRightLayout, widthMeasureSpec, heightMeasureSpec);
-        if (mLeftText.getMeasuredWidth() > mRightLayout.getMeasuredWidth()) {
+        if (mLeftLayout.getMeasuredWidth() > mRightLayout.getMeasuredWidth()) {
             mCenterLayout.measure(
-                    MeasureSpec.makeMeasureSpec(mScreenWidth - 2 * mLeftText.getMeasuredWidth(), MeasureSpec.EXACTLY)
+                    MeasureSpec.makeMeasureSpec(mScreenWidth - 2 * mLeftLayout.getMeasuredWidth(), MeasureSpec.EXACTLY)
                     , heightMeasureSpec);
         } else {
             mCenterLayout.measure(
@@ -598,12 +622,12 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        mLeftText.layout(0, mStatusBarHeight, mLeftText.getMeasuredWidth(), mLeftText.getMeasuredHeight() + mStatusBarHeight);
+        mLeftLayout.layout(0, mStatusBarHeight, mLeftLayout.getMeasuredWidth(), mLeftLayout.getMeasuredHeight() + mStatusBarHeight);
         mRightLayout.layout(mScreenWidth - mRightLayout.getMeasuredWidth(), mStatusBarHeight,
                 mScreenWidth, mRightLayout.getMeasuredHeight() + mStatusBarHeight);
-        if (mLeftText.getMeasuredWidth() > mRightLayout.getMeasuredWidth()) {
-            mCenterLayout.layout(mLeftText.getMeasuredWidth(), mStatusBarHeight,
-                    mScreenWidth - mLeftText.getMeasuredWidth(), getMeasuredHeight());
+        if (mLeftLayout.getMeasuredWidth() > mRightLayout.getMeasuredWidth()) {
+            mCenterLayout.layout(mLeftLayout.getMeasuredWidth(), mStatusBarHeight,
+                    mScreenWidth - mLeftLayout.getMeasuredWidth(), getMeasuredHeight());
         } else {
             mCenterLayout.layout(mRightLayout.getMeasuredWidth(), mStatusBarHeight,
                     mScreenWidth - mRightLayout.getMeasuredWidth(), getMeasuredHeight());
@@ -611,9 +635,21 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
         mDividerView.layout(0, getMeasuredHeight() - mDividerView.getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight());
     }
 
-    public static int dip2px(int dpValue) {
+    public int dip2px(int dpValue) {
         final float scale = Resources.getSystem().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    public int px2dip(int pxValue) {
+        return getScreenWidth() * pxValue / 360;
+    }
+
+    public int getScreenWidth() {
+        WindowManager wm = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(outMetrics);
+        return outMetrics.widthPixels;
     }
 
     /**
