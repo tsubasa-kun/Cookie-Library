@@ -18,14 +18,24 @@
         android:textColor="@color/black"
         android:textStyle="bold" />
 
-    <ProgressBar
+    <!--<ProgressBar-->
+        <!--android:id="@+id/pull_to_refresh_progress"-->
+        <!--style="@style/customProgressBar"-->
+        <!--android:layout_marginRight="20dip"-->
+        <!--android:layout_marginTop="10dip"-->
+        <!--android:layout_toLeftOf="@id/pull_to_refresh_text"-->
+        <!--android:indeterminate="true"-->
+        <!--android:visibility="gone" />-->
+
+    <ImageView
         android:id="@+id/pull_to_refresh_progress"
-        style="@style/customProgressBar"
-        android:layout_marginRight="20dip"
-        android:layout_marginTop="10dip"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
         android:layout_toLeftOf="@id/pull_to_refresh_text"
-        android:indeterminate="true"
-        android:visibility="gone" />
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/ic_launcher"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/pull_to_refresh_image"

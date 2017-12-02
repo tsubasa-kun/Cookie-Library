@@ -45,6 +45,8 @@ public class ThirdActivity extends BaseActivity implements LoadAndRefreshView.On
     @Override
     public void initWidget(Bundle savedInstanceState) {
         initTitle();
+        loadAndRefreshView.setRefreshEnable(true);
+        loadAndRefreshView.setLoadEnable(false);
         loadAndRefreshView.setOnHeaderRefreshListener(this);
         loadAndRefreshView.setOnFooterRefreshListener(this);
         webView.setWebViewClient(new WebViewClient());
