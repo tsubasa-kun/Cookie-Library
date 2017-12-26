@@ -39,7 +39,6 @@
 - NetworkStatusReceiver：网络状态监听广播接收器
 
 ### utils
-- AngTimeToastUtils：自定义时长的Toast（并不全机型兼容）
 - CircularAnimUtils：圆形展开切换动画
 - KeyBoardUtils：软键盘打开关闭工具类
 - LogUtils：日志工具类
@@ -57,6 +56,7 @@
 - ToastUtils：显示Toast的工具类
 
 ### widget
+- AngTimeToast：自定义时长的Toast（并不全机型兼容）
 - AutoCardView：配合AutoLayout的CardView
 - AutoSwipeRefreshLayout：可自动刷新的SwipeRefreshLayout
 - ClearableEditText：带清空功能的编辑框

@@ -1,4 +1,4 @@
-package com.love_cookies.cookie_library.utils;
+package com.love_cookies.cookie_library.widget;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -17,7 +17,7 @@ import android.widget.Toast;
  * 自定义时长的Toast（并不全机型兼容）
  */
 
-public class AngTimeToastUtils {
+public class AngTimeToast {
     private static final int LENGTH_SHORT_TIME = 2000;
     private static Context mContext = null;
     private static Toast mToast = null;
@@ -26,12 +26,12 @@ public class AngTimeToastUtils {
     private static CharSequence mText = null;
     private Handler mHandler = new Handler();
 
-    private AngTimeToastUtils(Context context) {
+    private AngTimeToast(Context context) {
         mContext = context;
     }
 
-    public static AngTimeToastUtils makeText(Context context, CharSequence text, int duration) {
-        AngTimeToastUtils instance = new AngTimeToastUtils(context);
+    public static AngTimeToast makeText(Context context, CharSequence text, int duration) {
+        AngTimeToast instance = new AngTimeToast(context);
         mContext = context;
         mDuration = duration;
         mText = text;

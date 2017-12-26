@@ -33,7 +33,7 @@ public class CookieTitleBar extends ViewGroup implements View.OnClickListener {
     private static final int DEFAULT_ACTION_TEXT_SIZE = 12;//默认两侧按钮字体大小
     private static final int DEFAULT_ACTION_TEXT_COLOR = Color.BLACK;//默认两侧按钮字体颜色
     private static final int DEFAULT_TITLE_BAR_HEIGHT = 45;//默认标题栏高度
-    private static final int DEFAULT_LEFT_IMG_SIZE = 25;//默认右侧图标大小
+    private static final int DEFAULT_LEFT_IMG_SIZE = 25;//默认左侧图标大小
     private static final int DEFAULT_ACTION_PADDING = 10;//默认action按钮内边距
     private static final int DEFAULT_OUT_PADDING = 0;//默认外内边距
     private static final int DEFAULT_TITLE_BACKGROUND_COLOR = Color.WHITE;//默认标题栏背景色
