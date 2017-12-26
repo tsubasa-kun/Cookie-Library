@@ -9,9 +9,6 @@
 
 <!-- more -->
 
-## 库结构图
-![cookie-library](http://7xt6qm.com1.z0.glb.clouddn.com/Cookie-Library201608311654.png)
-
 ## 库结构介绍
 整个库的名字叫做cookie-library，整个结构包括了activity，adapter，application，fragment，interfaces，network，utils，widget。
 
@@ -42,9 +39,11 @@
 - NetworkStatusReceiver：网络状态监听广播接收器
 
 ### utils
+- AngTimeToastUtils：自定义时长的Toast（并不全机型兼容）
 - CircularAnimUtils：圆形展开切换动画
 - KeyBoardUtils：软键盘打开关闭工具类
 - LogUtils：日志工具类
+- NavigationBarUtils：虚拟导航栏工具类
 - NetworkUtils：网络状况获取相关工具类
 - PackageUtils：包工具类
 - PhoneUtils：手机设备工具类
